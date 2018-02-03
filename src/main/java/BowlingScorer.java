@@ -6,6 +6,7 @@ public class BowlingScorer implements BowlingGame {
     private static final int WINNING_FRAME_SCORE = 10;
     private static final int TOTAL_FRAMES = 10;
     private List<Integer> rolledPins;
+    private int score;
 
     BowlingScorer() {
         this.rolledPins = new ArrayList<>();
@@ -18,7 +19,7 @@ public class BowlingScorer implements BowlingGame {
 
     @Override
     public int score() {
-        int score = 0;
+        score = 0;
         int rollsInFrame = 0;
         for (int frame = 0; frame < TOTAL_FRAMES; frame++) {
             if (isStrike(rollsInFrame)) {

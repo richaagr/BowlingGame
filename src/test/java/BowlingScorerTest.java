@@ -34,7 +34,7 @@ public class BowlingScorerTest {
 
     @Test
     public void shouldAddStrikeScoreIfStrike() {
-        bowlingScorer.roll(10);
+        rollStrikes(1);
         bowlingScorer.roll(4);
         bowlingScorer.roll(5);
         rollMultipleWithNoPins(16);
@@ -44,7 +44,7 @@ public class BowlingScorerTest {
 
     @Test
     public void shouldAddBothSpareAndStrikeScore() {
-        bowlingScorer.roll(10);
+        rollStrikes(1);
         bowlingScorer.roll(6);
         bowlingScorer.roll(4);
         bowlingScorer.roll(2);
@@ -56,10 +56,10 @@ public class BowlingScorerTest {
 
     @Test
     public void shouldTestMultipleStrikesAndSpares() {
-        bowlingScorer.roll(10);
+        rollStrikes(1);
         bowlingScorer.roll(5);
         bowlingScorer.roll(5);
-        bowlingScorer.roll(10);
+        rollStrikes(1);
         bowlingScorer.roll(4);
         bowlingScorer.roll(6);
         rollMultipleWithNoPins(12);
@@ -69,21 +69,28 @@ public class BowlingScorerTest {
 
     @Test
     public void shouldTestAllStrikes() {
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
+        rollStrikes(10);
         //Two more chances in case of strike
-        bowlingScorer.roll(10);
-        bowlingScorer.roll(10);
+        rollStrikes(2);
 
         assertEquals(300, bowlingScorer.score()); //(10+10+10)*10
+    }
+
+    @Test
+    public void shouldTestOneMoreChanceInCaseOfLastSpare() {
+        rollStrikes(9);
+        bowlingScorer.roll(4);
+        bowlingScorer.roll(6);
+        //One more chances in case of spare
+        bowlingScorer.roll(3);
+
+        assertEquals(267, bowlingScorer.score()); //(10+10+10)*7 +(10+10+4) +(10+4+6)+(4+6+3)
+    }
+
+    private void rollStrikes(int times) {
+        for (int i = 0; i < times; i++) {
+            bowlingScorer.roll(10);
+        }
     }
 
     private void rollMultipleWithNoPins(int rollWithNoPins) {
