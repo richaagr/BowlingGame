@@ -1,5 +1,7 @@
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,13 +9,16 @@ public class BowlingScorerTest {
 
     private BowlingScorer bowlingScorer;
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Before
     public void setUp() {
         bowlingScorer = new BowlingScorer();
     }
 
     @Test
-    public void shouldAddNumberOfPins() {
+    public void shouldAddNumberOfPins() throws BowlingException {
         bowlingScorer.roll(1);
         bowlingScorer.roll(6);
         rollMultipleWithNoPins(18);
@@ -22,7 +27,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldAddSpareScoreIfSpare() {
+    public void shouldAddSpareScoreIfSpare() throws BowlingException {
         bowlingScorer.roll(4);
         bowlingScorer.roll(6);
         bowlingScorer.roll(4);
@@ -33,7 +38,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldAddStrikeScoreIfStrike() {
+    public void shouldAddStrikeScoreIfStrike() throws BowlingException {
         rollStrikes(1);
         bowlingScorer.roll(4);
         bowlingScorer.roll(5);
@@ -43,7 +48,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldAddBothSpareAndStrikeScore() {
+    public void shouldAddBothSpareAndStrikeScore() throws BowlingException {
         rollStrikes(1);
         bowlingScorer.roll(6);
         bowlingScorer.roll(4);
@@ -55,7 +60,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldTestMultipleStrikesAndSpares() {
+    public void shouldTestMultipleStrikesAndSpares() throws BowlingException {
         rollStrikes(1);
         bowlingScorer.roll(5);
         bowlingScorer.roll(5);
@@ -68,7 +73,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldTestAllStrikes() {
+    public void shouldTestAllStrikes() throws BowlingException {
         rollStrikes(10);
         //Two more chances in case of strike
         rollStrikes(2);
@@ -77,7 +82,7 @@ public class BowlingScorerTest {
     }
 
     @Test
-    public void shouldTestOneMoreChanceInCaseOfLastSpare() {
+    public void shouldTestOneMoreChanceInCaseOfLastSpare() throws BowlingException {
         rollStrikes(9);
         bowlingScorer.roll(4);
         bowlingScorer.roll(6);
@@ -85,6 +90,16 @@ public class BowlingScorerTest {
         bowlingScorer.roll(3);
 
         assertEquals(267, bowlingScorer.score()); //(10+10+10)*7 +(10+10+4) +(10+4+6)+(4+6+3)
+    }
+
+    @Test
+    public void shouldThrowNotEnoughRollsError() throws BowlingException {
+        expectedException.expect(BowlingException.class);
+        expectedException.expectMessage(Constants.NOT_ENOUGH_ROLLS_MESSAGE);
+        rollStrikes(9);
+        bowlingScorer.roll(4);
+        bowlingScorer.roll(6);
+        bowlingScorer.score();
     }
 
     private void rollStrikes(int times) {
