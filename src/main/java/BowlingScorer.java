@@ -21,7 +21,10 @@ public class BowlingScorer implements BowlingGame {
         int score = 0;
         int rollsInFrame = 0;
         for (int frame = 0; frame < TOTAL_FRAMES; frame++) {
-            if (isSpare(rollsInFrame)) {
+            if (isStrike(rollsInFrame)) {
+                score += WINNING_FRAME_SCORE + strikeScore(rollsInFrame);
+                rollsInFrame +=1;
+            } else if (isSpare(rollsInFrame)) {
                 score += WINNING_FRAME_SCORE + spareScore(rollsInFrame);
                 rollsInFrame += 2;
             } else {
@@ -30,6 +33,14 @@ public class BowlingScorer implements BowlingGame {
             }
         }
         return score;
+    }
+
+    private int strikeScore(int rollsInFrame) {
+        return rollSumInFrame(rollsInFrame + 1);
+    }
+
+    private boolean isStrike(int rollsInFrame) {
+        return rolledPins.get(rollsInFrame) == WINNING_FRAME_SCORE;
     }
 
     private boolean isSpare(int frame) {
